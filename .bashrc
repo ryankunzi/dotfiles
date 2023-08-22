@@ -1,121 +1,68 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+# export PS1='\[\e[36m\]\T\[\e[00m\]:\[\e[32m\]\u\[\e[00m\]@\[\e[32m\]\h\[\e[00m\]:\[\e[34m\]\w\[\e[00m\]\$ '
 
-# If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+# Show current git branch name
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
 
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
+# export PS1="\[\033[38;5;40m\][\t]\[$(tty -s && tput sgr0)\]\[\033[38;5;12m\]\u\[$(tty -s && tput sgr0)\]\[\033[38;5;1m\]@\[$(tty -s && tput sgr0)\]\[\033[38;5;209m\]\h\[$(tty -s && tput sgr0)\]\[\033[38;5;11m\]\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')\[$(tty -s && tput sgr0)\]\[\033[38;5;13m\]\\$\[$(tty -s && tput sgr0)\] \[$(tty -s && tput sgr0)\]"
+export PS1="\[\033[38;5;41m\][\[$(tty -s && tput sgr0)\]\[\033[38;5;40m\]\t\[$(tty -s && tput sgr0)\]\[\033[38;5;35m\]]\[$(tty -s && tput sgr0)\]\[\033[38;5;1m\]\h:\[$(tty -s && tput sgr0)\]\[\033[38;5;45m\]\W\[$(tty -s && tput sgr0)\]\[\033[38;5;226m\]\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')\[$(tty -s && tput sgr0)\] \[$(tty -s && tput sgr0)\]\[\033[38;5;164m\]\\$\[$(tty -s && tput sgr0)\] \[$(tty -s && tput sgr0)\]"
 
-# append to the history file, don't overwrite it
-shopt -s histappend
+export VNCPORT="80"
+export VNCRES="1920x1080"
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+alias vncstart="vncserver :$VNCPORT -geometry $VNCRES; tail -fn100 ~/.vnc/`hostname`\:$VNCPORT.log"
+alias vncstop="vncserver -kill :$VNCPORT"
+alias vncrestart="vncstop; vncstart"
 
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
+# Firmware build aliases
+alias roc='bsub_int "make -j24 clean && make -j24 roc"'
+alias strix='bsub_int "make -j24 clean && make -j24 strix"'
 
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+# Useful Functions
+bsub_int() {
+    bsub -q superfpgibm-queue -I "kinit -k -t /pool/keytabs/ryan.kunzi.keytab ryan.kunzi@TEXMEMSYS.COM; $1"
+}
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
+bsub_intp() {
+    bsub -q non-urgent-queue -Ip "kinit -k -t /pool/keytabs/ryan.kunzi.keytab ryan.kunzi@TEXMEMSYS.COM; $1"
+}
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
+bsub_xint() {
+    bsub -q non-urgent-queue -XF -I "kinit -k -t /pool/keytabs/ryan.kunzi.keytab ryan.kunzi@TEXMEMSYS.COM; $1"
+}
 
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
-export PS1="\[\033[38;5;41m\][\[$(tput sgr0)\]\[\033[38;5;40m\]\t\[$(tput sgr0)\]\[\033[38;5;35m\]]\[$(tput sgr0)\]\[\033[38;5;1m\]\h:\[$(tput sgr0)\]\[\033[38;5;45m\]\W\[$(tput sgr0)\]\[\033[38;5;226m\]\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')\[$(tput sgr0)\] \[$(tput sgr0)\]\[\033[38;5;164m\]\\$\[$(tput sgr0)\] \[$(tput sgr0)\]"
+bsub_non_int() {
+    bsub -o lsf_bsub.log -q non-urgent-queue "kinit -k -t /pool/keytabs/ryan.kunzi.keytab ryan.kunzi@TEXMEMSYS.COM; $1"
+}
 
-#if [ "$color_prompt" = yes ]; then
-#    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-#else
-#    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-#fi
-unset color_prompt force_color_prompt
+bsub_flc_test() {
+    bsub -q vm-queue -Ip ./run_sim -v 2021.09 -t tb_flash_lane_cntrl_V2 -c usr/ryan.kunzi/run_sim.config $2 --simargs "+UVM_TESTNAME=$1 -define PROWLER -define VERSAL -define CARD_SIZE_LG -define NUM_OF_PAGES=1" -C
+}
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+bsub_vivado() {
+    bsub -q vm-queue -XF -Ip vivado
+}
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
-
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_github_rsa
+export SSH_AUTH_SOCK=""
+alias sbc='source ~/.bashrc'
+alias ls='ls --color=auto'
+alias cdflc='cd "sim/tb_flash_lane_cntrl_V2"'
+alias cdreg='cd "sim/regressions"'
+alias cdrf='cd "sim/regressions/flash_lane_cntrl_V2"'
+alias cdsm='cd /home/fpgadev/fpgaprog/pegasus/pass1/sm/anvil'
+alias gstat='git status'
+alias ignoretags='git update-index --assume-unchanged tags'
+alias cd4='cd /pool/ryan.kunzi/fcm4/'
+alias runregflc='./run_regression flash_lane_cntrl_V2 --drm lsf'
+alias topsanity='./run_regression abstract_gwy_sanity --drm lsf'
+alias vman='vmanager -server h153-11:8080'
+alias simv='simvision -64bit &'
+alias p_siren='sudo /home/fpgadev/unofficial_builds/fcm_mquic patch /home/jupiter/ryan.kunzi/siren_unenc.bin'
+alias p_siren_enc='sudo /home/fpgadev/unofficial_builds/fcm_mquic patch /home/jupiter/ryan.kunzi/siren.bin'
+alias p_siren_enc='sudo /home/fpgadev/unofficial_builds/fcm_mquic patch /home/jupiter/ryan.kunzi/siren.bin'
+alias test_dt='sudo /opt/ibm/testing/bin/dt'
+alias lastlogsort='lastlog | sort -k9n -k5M -k6n'
+alias gpull='git pull & git submodule update'

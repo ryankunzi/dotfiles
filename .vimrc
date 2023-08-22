@@ -32,14 +32,22 @@ set visualbell
 set encoding=utf-8
 
 " Whitespace
-set wrap
-set textwidth=79
+set nowrap
+set textwidth=0
 set formatoptions=tcqrn1
 set tabstop=4
-set shiftwidth=2
-set softtabstop=2
+set shiftwidth=4
+set softtabstop=4
 set expandtab
 set noshiftround
+set autoindent
+
+" Font
+set guifont=Monospace\ 12
+
+" Tags
+set tags=tags;/
+set tags+=~/.vim/tags/UVM
 
 " Cursor motion
 set scrolloff=3
@@ -78,6 +86,10 @@ map <leader><space> :let @/=''<cr> " clear search
 inoremap <F1> <ESC>:set invfullscreen<CR>a
 nnoremap <F1> :set invfullscreen<CR>
 vnoremap <F1> :set invfullscreen<CR>
+au BufRead,BufNewFile *.v set filetype=verilog
+au BufRead,BufNewFile *.sv,*.svh set filetype=systemverilog
+au BufRead,BufNewFile *.fcl set filetype=verilog
+au BufRead,BufNewFile *.sh,*.csh set filetype=c
 
 " Textmate holdouts
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-FILES=".vimrc .vim .bashrc .gitconfig"
+FILES=".vimrc .vim"
 BACKUP=$HOME/.backup
 
-git submodule init
-git submodule update
+#git submodule init
+#git submodule update
 
 if [[ ! -e $BACKUP ]]; then
     mkdir "$BACKUP"
@@ -27,14 +27,14 @@ do
 #    echo "$f"
     if [[ -f $f ]]; then
         if [[ -e $HOME/$f ]]; then
-            echo "Moving file $f to .backups/"
+            echo "Moving file $f to .backup/"
             mv $HOME/$f $BACKUP   
         fi
         echo "Copying file $f to $HOME"
         cp $f $HOME/
     elif [[ -d $f ]]; then
         if [[ -e $HOME/$f ]]; then
-            echo "Moving directory $f to .backups/"
+            echo "Moving directory $f to .backup/"
             if [[ -e $BACKUP/.vim ]]; then
                 rm -r $BACKUP/.vim
             fi
