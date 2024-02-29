@@ -1,0 +1,10 @@
+tags
+*.sw?
+*.log
+*.jou
+*local*.vsif
+sim/*/run[0-9]
+sim/regressions/results
+build/output_files*
+*.orig
+*.Xil

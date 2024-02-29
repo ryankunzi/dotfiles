@@ -1,3 +1,13 @@
 [user]
-	email = ryanekunzi@hotmail.com
-	name = ryankunzi
+	name = Ryan Kunzi
+	email = ryan.kunzi@ibm.com
+[color]
+	ui = auto
+[pull]
+	rebase = true
+	rebase = merges
+[core]
+	excludesFile = /home/jupiter/ryan.kunzi/.gitignore
+	editor = vim
+[merge]
+	ff = false

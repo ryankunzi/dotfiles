@@ -33,7 +33,7 @@ set encoding=utf-8
 
 " Whitespace
 set nowrap
-set textwidth=0
+set textwidth=79
 set formatoptions=tcqrn1
 set tabstop=4
 set shiftwidth=4
@@ -82,11 +82,14 @@ set smartcase
 set showmatch
 map <leader><space> :let @/=''<cr> " clear search
 
+" Set default netrw listing to tree
+let g:netrw_liststyle= 4
+
 " Remap help key.
 inoremap <F1> <ESC>:set invfullscreen<CR>a
 nnoremap <F1> :set invfullscreen<CR>
 vnoremap <F1> :set invfullscreen<CR>
-au BufRead,BufNewFile *.v set filetype=verilog
+au BufRead,BufNewFile *.v,*.vh set filetype=verilog
 au BufRead,BufNewFile *.sv,*.svh set filetype=systemverilog
 au BufRead,BufNewFile *.fcl set filetype=verilog
 au BufRead,BufNewFile *.sh,*.csh set filetype=c
@@ -103,11 +106,46 @@ set listchars=tab:▸\ ,eol:¬
 " Or use your leader key + l to toggle on/off
 map <leader>l :set list!<CR> " Toggle tabs and EOL
 
+" Load rainbow parentheses plugin (but start with it off)
+let g:rainbow_active=0
+
+" Highlight row containing cursor
+set cursorline
+
 " Color scheme (terminal)
 set t_Co=256
 set background=dark
 let g:solarized_termcolors=256
 let g:solarized_termtrans=1
+" let g:rainbow_active=1 " Multi-colored parentheses
 " put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
 " in ~/.vim/colors/ and uncomment:
 colorscheme solarized
+
+"" vim-airline symbols
+"  if !exists('g:airline_symbols')
+"    let g:airline_symbols = {}
+"  endif
+"
+"  " unicode symbols
+"  let g:airline_left_sep = '»'
+"  let g:airline_left_sep = '▶'
+"  let g:airline_right_sep = '«'
+"  let g:airline_right_sep = '◀'
+"  let g:airline_symbols.colnr = ' ㏇:'
+"  let g:airline_symbols.colnr = ' ℅:'
+"  let g:airline_symbols.crypt = '🔒'
+"  let g:airline_symbols.linenr = '☰'
+"  let g:airline_symbols.linenr = ' ␊:'
+"  let g:airline_symbols.linenr = ' ␤:'
+"  let g:airline_symbols.linenr = '¶'
+"  let g:airline_symbols.maxlinenr = ''
+"  let g:airline_symbols.maxlinenr = '㏑'
+"  let g:airline_symbols.branch = '⎇'
+"  let g:airline_symbols.paste = 'ρ'
+"  let g:airline_symbols.paste = 'Þ'
+"  let g:airline_symbols.paste = '∥'
+"  let g:airline_symbols.spell = 'Ꞩ'
+"  let g:airline_symbols.notexists = 'Ɇ'
+"  let g:airline_symbols.notexists = '∄'
+"  let g:airline_symbols.whitespace = 'Ξ'
