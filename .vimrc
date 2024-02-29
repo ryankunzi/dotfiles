@@ -5,6 +5,7 @@ set nocompatible
 filetype off
 
 " TODO: Load plugins here (pathogen or vundle)
+runtime bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect()
 
 " Turn on syntax highlighting
